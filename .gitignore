@@ -1,0 +1,12 @@
+/target
+.claude/
+.idea/
+.obsidian/
+.vscode/
+.DS_Store
+*.log
+*.tmp
+*.bak
+*.swp
+*.swo
+*.swn
