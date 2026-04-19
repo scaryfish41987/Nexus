@@ -1,50 +1,46 @@
 ---
 titulo: Nexus - Motor Visualizador de Algoritmos
-version: 1
+version: 1.1
 autor: Jaime Mendivil Martinez
-fecha: 2026-04-17
-estado: Obsoleto (Concepto Base)
+fecha: 2026-03-18
+estado: Obsoleto (Cambio a plataforma)
 ---
-
-# PRD: Nexus - Motor Visualizador de Algoritmos (v1.0)
+# PRD: Nexus - Motor Visualizador de Algoritmos (v1.1)
 
 ## 1. Visión y Propósito (El "Por qué")
-* **El Problema:** Aprender estructuras de datos es abstracto. Los visualizadores web actuales son lentos con muchos datos, y el software de escritorio tradicional trae algoritmos "quemados" (hardcoded) en el código fuente, impidiendo que el estudiante agregue los suyos.
-* **La Solución:** Un motor de escritorio nativo de altísimo rendimiento donde la lógica matemática se separa totalmente de la interfaz. Los algoritmos se escriben en scripts de texto plano, permitiendo una extensibilidad infinita.
+* **El Problema:** Descargar y compartir archivos `.rhai` manualmente cada vez que el profesor corrige o añade un algoritmo genera versiones desactualizadas y fricción en los estudiantes.
+* **La Solución:** Nexus evoluciona a una plataforma de contenido dinámico. Sincroniza silenciosamente una biblioteca oficial de algoritmos al abrirse, manteniendo la libertad de que el usuario modifique copias locales.
 
 ## 2. Público Objetivo (User Personas)
-* **El Estudiante Principal:** Estudiante de ingeniería de software cursando Estructuras de Datos. Sabe programar lo básico, pero se frustra al no poder "ver" cómo muta la memoria durante un ciclo *while*.
-* **El Docente de Algoritmia:** Profesor que necesita una herramienta rápida y confiable que no dependa del internet de la universidad para dar su clase.
+* **El Estudiante Principal:** Necesita garantías de que está estudiando con el algoritmo correcto proporcionado por la clase, pero requiere un entorno seguro ("sandbox") para experimentar rompiendo el código.
+* **El Docente de Algoritmia:** Quiere actualizar un algoritmo en GitHub y saber que todos sus alumnos tendrán la versión visualizable en sus máquinas al día siguiente.
 
 ## 3. Casos de Uso (User Journeys)
-* "Como estudiante, quiero cargar un script `.rhai` desde mi computadora y darle 'Play' para ver cómo se mueven los bloques de un *Bubble Sort* paso a paso, de modo que pueda prepararme para mi examen."
-* "Como docente, quiero tener un control deslizante de velocidad para ejecutar el algoritmo rápido hasta llegar al punto crítico que quiero explicarle a la clase."
+* "Como estudiante, al abrir Nexus, quiero que la app descargue los nuevos algoritmos automáticamente en la carpeta `official/` sin que yo tenga que configurar nada."
+* "Como estudiante curioso, quiero copiar un algoritmo a mi carpeta `custom/`, alterar la lógica del *while*, y que Nexus ejecute mi versión para ver cómo se corrompe el ordenamiento."
 
 ## 4. Alcance del MVP (In Scope vs. Out of Scope)
 * **In Scope (En Alcance):**
-    * Motor asíncrono en Rust (con canales `mpsc`).
-    * Interfaz nativa en Dioxus.
-    * Intérprete para cargar algoritmos locales (`.rhai`).
-    * Renderizado de Arreglos 1D (bloques).
-    * Controles: Play, Pause, Siguiente Paso, Velocidad.
+    * Todo lo de la v1.0.
+    * `SyncManager`: Sincronización automática con repositorio remoto (GitHub API).
+    * Sistema de carpetas separadas (`official/` vs `custom/`).
 * **Out of Scope (Fuera de Alcance):**
-    * Renderizado de Grafos (Nodos/Aristas).
-    * Actualizaciones automáticas.
-    * Editor de código (IDE) dentro de la app.
+    * Grafos 2D/3D.
+    * Actualización remota del ejecutable principal (OTA Update).
 
 ## 5. Requisitos a Alto Nivel
-* **Funcionales:** Botones de control de ejecución, selector de archivos locales para cargar algoritmos.
-* **No Funcionales / Experiencia:** Rendimiento nativo en macOS y Windows; funcionamiento 100% *offline*; protección anti-cuelgues si el script del usuario tiene un bucle infinito.
+* **Funcionales:** Detección y priorización de scripts locales sobre los oficiales si hay conflicto de nombres; indicadores visuales en la UI (ej. etiqueta "Oficial" o "Personalizado").
+* **No Funcionales / Experiencia:** La comprobación de red al arranque no debe bloquear la apertura de la interfaz (debe ser asíncrona).
 
 ## 6. Métricas de Éxito (KPIs)
-* **Cuantitativas:** 60 FPS estables renderizando un arreglo de 500 elementos. Tiempo de arranque del software < 1.5 segundos.
-* **Cualitativas:** Un usuario nuevo puede cargar su propio algoritmo en menos de 3 clics desde que abre la aplicación.
+* **Cuantitativas:** El peso de la red al sincronizar debe ser < 500 KB; el arranque completo (incluyendo ping de red) debe mantenerse < 1.5s.
+* **Cualitativas:** El estudiante entiende intuitivamente que no debe editar los archivos de la carpeta oficial gracias a las advertencias de la interfaz.
 
 ## 7. Dependencias y Riesgos
-* **Técnicos:** Dioxus es un ecosistema joven; una actualización mayor del framework podría romper componentes de la interfaz.
-* **De Recursos:** Tiempo de desarrollo limitado por las entregas y laboratorios de la universidad.
+* **Técnicos:** Límites de peticiones (Rate Limits) de la API de GitHub si muchos estudiantes abren la aplicación al mismo tiempo.
+* **De Recursos:** (Mismos que v1.0).
 
 ## 8. Cronograma / Hitos (Milestones)
-* **Hito 1:** Diseño de UI y arquitectura interna aprobados.
-* **Hito 2:** Prueba de concepto: El motor Rust compila un script `.rhai` y manda señales por el canal.
-* **Hito 3:** MVP de escritorio listo para la primera prueba con un arreglo ordenándose visualmente.
+* **Hito 1:** Implementación del `SyncManager` y lectura de múltiples directorios.
+* **Hito 2:** Integración de la lógica de sincronización con la UI de Dioxus.
+* **Hito 3:** MVP listo con catálogo de algoritmos auto-actualizable.
